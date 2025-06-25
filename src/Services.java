@@ -2,16 +2,17 @@ import java.util.*;
 
 public class Services {
 
-    public static Integer menu(Scanner scan) {
+    public static String menu(Scanner scan) {
         System.out.println("1 - Cadastrar um produto (nome e preço)" +
                 "\n2 - Listar todos os produtos com seus preços." +
                 "\n3 - Mostrar o Produto mais caro" +
                 "\n4 - Calcular a média de preços dos produtos" +
                 "\n5 - Listar produtos com preço acima da média" +
                 "\n6 - Remover produto." +
+                "\n7 - Atualizar preço do Produto" +
+                "\n8 - Exibir o valor total dos Produtos" +
                 "\n0 - Sair do programa");
-        int opcao = scan.nextInt();
-        return opcao;
+        return scan.next();
     }
 
     public static void cadastrarProduto(Scanner scan, HashMap<String, Double> listaDeProdutos){
@@ -24,21 +25,18 @@ public class Services {
         }
         System.out.println("Insira o preço do produto");
         double precoProduto = scan.nextDouble();
-        try{
-            listaDeProdutos.put(nomeProduto, precoProduto);
-            System.out.println("Produto cadastrado com sucesso!");
-        } catch (InputMismatchException e) {
-            System.out.println("Entrada de dados inválida!");
-        }
-        catch (Exception e){
-            System.out.println("Erro desconhecido: " + e.getMessage());
-        }
+        listaDeProdutos.put(nomeProduto, precoProduto);
+        System.out.println("Produto cadastrado com sucesso!");
     }
 
     public static void listarProdutos(HashMap<String, Double> listaDeProdutos){
-        System.out.println("=======LISTA DE PRODUTOS=======");
-        for (Map.Entry<String, Double> entry : listaDeProdutos.entrySet()){
-            System.out.println("Produto: " + entry.getKey() + " - Valor: R$" + entry.getValue());
+        if (listaDeProdutos.isEmpty()){
+            System.out.println("A Lista de produtos está vazia");
+        } else {
+            System.out.println("=======LISTA DE PRODUTOS=======");
+            for (Map.Entry<String, Double> entry : listaDeProdutos.entrySet()){
+                System.out.println("Produto: " + entry.getKey() + " - Valor: R$" + entry.getValue());
+            }
         }
     }
 
@@ -69,14 +67,37 @@ public class Services {
     }
 
     public static void removerProduto(Scanner scan, HashMap<String, Double> listaDeProdutos){
-        try {
             System.out.println("Insira o nome do produto que você deseja remover");
             String produto = scan.next();
-            listaDeProdutos.remove(produto);
-        } catch (InputMismatchException e) {
-            System.out.println("Entrada inválida");
-        } catch (Exception e){
-            System.out.println("Erro desconhecido: " + e.getMessage());
+            if (listaDeProdutos.containsKey(produto)){
+                listaDeProdutos.remove(produto);
+                System.out.println("Produto removido com sucesso!");
+            } else {
+                System.out.println("Não foi possível achar esse produto no nosso estoque!");
+            }
+    }
+
+    public static void atualizarPreco(Scanner scan, HashMap<String, Double> listaDeProdutos){
+
+            scan.nextLine();
+            System.out.println("Insira o nome do produto que você deseja atualizar o preço: ");
+            String nomeProduto = scan.nextLine();
+            if (listaDeProdutos.containsKey(nomeProduto)){
+                System.out.println("Insira o novo preço desse produto: ");
+                double novoValor = scan.nextDouble();
+                listaDeProdutos.replace(nomeProduto, novoValor);
+                System.out.println("O produto: "+ nomeProduto + "agora tem o valor: R$" + listaDeProdutos.get(nomeProduto));
+            }
+            else {
+                System.out.println("Não foi possível achar esse produto no nosso estoque!");
+            }
+    }
+
+    public static Double exibirValorTotal(HashMap<String, Double> listaDeProdutos){
+        double valorTotal = 0.0;
+        for (Map.Entry<String, Double> entry: listaDeProdutos.entrySet()){
+            valorTotal += entry.getValue();
         }
+        return valorTotal;
     }
 }
